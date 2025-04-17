@@ -123,7 +123,7 @@ function App() {
 
   return (
     <main className="w-full h-screen flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto pb-32">
+      <div className="flex-1 overflow-y-auto pb-[400px]">
         <div className="max-w-[900px] mx-auto p-5">
           <ChatDisplay messages={messages} />
           <Button
@@ -136,7 +136,7 @@ function App() {
           </Button>
         </div>
       </div>
-      <div className="fixed bottom-5 left-0 right-0 bg-white">
+      <div className="fixed bottom-5 left-0 right-0 bg-transparent">
         <div className="max-w-[900px] mx-auto">
           <ChatInputCard handleChatSubmit={handleChatSubmit} />
         </div>
