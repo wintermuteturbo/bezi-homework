@@ -1,19 +1,21 @@
-import React, { useState } from "react";
+import { useState, KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 interface ChatInputProps {
   onSubmit: (message: string) => void;
-  isLoading?: boolean;
 }
 
-export default function ChatInput({ onSubmit, isLoading = false }: ChatInputProps) {
+export default function ChatInput({ onSubmit }: ChatInputProps) {
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (message.trim()) {
-      onSubmit(message);
-      setMessage("");
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    // support multiline input
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (message.trim()) {
+        onSubmit(message);
+        setMessage("");
+      }
     }
   };
 
@@ -44,17 +46,16 @@ export default function ChatInput({ onSubmit, isLoading = false }: ChatInputProp
           ))}
         </div>
       </div>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-2.5 py-5 w-full">
+      <div className="py-5 w-full">
         <Textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Describe the Unity objects you want to create..."
+          onKeyDown={handleKeyDown}
+          placeholder="Describe the Unity objects you want to create... (Press Enter to submit)"
           rows={3}
+          className="w-full"
         />
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Sending..." : "Generate Scene"}
-        </Button>
-      </form>
+      </div>
     </div>
   );
 } 

@@ -32,7 +32,7 @@ function App() {
         role: msg.role,
         content: msg.text
       }));
-      
+
       // Send message to ChatGPT with conversation history
       const response = await sendMessageToChatGPT(message, apiMessages);
 
@@ -138,7 +138,7 @@ function App() {
       </div>
       <div className="fixed bottom-5 left-0 right-0 bg-white">
         <div className="max-w-[900px] mx-auto">
-          <ChatInputCard handleChatSubmit={handleChatSubmit} isLoading={isLoading} />
+          <ChatInputCard handleChatSubmit={handleChatSubmit} />
         </div>
       </div>
     </main>
