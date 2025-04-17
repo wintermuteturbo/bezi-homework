@@ -2,6 +2,13 @@ interface ChatGPTResponse {
   text: string;
   error?: string;
 }
+
+// Define API message interface to match OpenAI's API
+interface ApiMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
 const CHATGPT_API_URL = 'https://api.openai.com/v1/chat/completions';
 const UNITY_CLASS_NAME = "GeneratedScene";
 // Prompt template for guiding the model
@@ -43,7 +50,7 @@ public class ${UNITY_CLASS_NAME} : MonoBehaviour
     }
 }`;
 // TOBD: add passing messages history to the prompt to mantain context of the conversation
-export async function sendMessageToChatGPT(message: string): Promise<ChatGPTResponse> {
+export async function sendMessageToChatGPT(message: string, previousMessages: ApiMessage[] = []): Promise<ChatGPTResponse> {
   try {
     
     const apiUrl = CHATGPT_API_URL;
@@ -54,6 +61,19 @@ export async function sendMessageToChatGPT(message: string): Promise<ChatGPTResp
       throw new Error('No API key provided. Set VITE_OPENAI_API_KEY in your environment variables.');
     }
     
+    // Build messages array starting with system prompt, then previous messages, then current message
+    const messagesPayload = [
+      {
+        role: 'system' as const,
+        content: UNITY_PROMPT_TEMPLATE
+      },
+      ...previousMessages,
+      {
+        role: 'user' as const,
+        content: message
+      }
+    ];
+    
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
@@ -62,16 +82,7 @@ export async function sendMessageToChatGPT(message: string): Promise<ChatGPTResp
       },
       body: JSON.stringify({
         model: 'gpt-4o', // Using a more capable model
-        messages: [
-          {
-            role: 'system',
-            content: UNITY_PROMPT_TEMPLATE
-          },
-          {
-            role: 'user',
-            content: message
-          }
-        ],
+        messages: messagesPayload,
         max_tokens: 2000,
         temperature: 0.7 // Slightly higher creativity
       })

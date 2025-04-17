@@ -20,15 +20,21 @@ function App() {
     const userMessage: Message = {
       id: generateId(),
       text: message,
-      isUser: true
+      role: 'user'
     };
 
     setMessages(prevMessages => [...prevMessages, userMessage]);
     setIsLoading(true);
 
     try {
-      // Send message to ChatGPT
-      const response = await sendMessageToChatGPT(message);
+      // Prepare messages for the API by extracting just the role and content
+      const apiMessages = messages.map(msg => ({
+        role: msg.role,
+        content: msg.text
+      }));
+      
+      // Send message to ChatGPT with conversation history
+      const response = await sendMessageToChatGPT(message, apiMessages);
 
       if (response.error) {
         throw new Error(response.error);
@@ -44,7 +50,7 @@ function App() {
       const assistantMessage: Message = {
         id: generateId(),
         text: responseText,
-        isUser: false
+        role: 'assistant'
       };
 
       setMessages(prevMessages => [...prevMessages, assistantMessage]);
@@ -55,7 +61,7 @@ function App() {
         text: error instanceof Error
           ? `Error: ${error.message}`
           : "An unknown error occurred",
-        isUser: false
+        role: 'assistant'
       };
 
       setMessages(prevMessages => [...prevMessages, errorMessage]);
@@ -75,7 +81,7 @@ function App() {
       }
 
       // Get the response text from the last assistant message
-      const lastAssistantMessage = messages.filter(m => !m.isUser).pop();
+      const lastAssistantMessage = messages.filter(m => m.role === 'assistant').pop();
 
       if (!lastAssistantMessage) {
         alert("No AI response available to save");
