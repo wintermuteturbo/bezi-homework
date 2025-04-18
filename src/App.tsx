@@ -78,6 +78,11 @@ function App() {
     setInputValue(prompt);
   };
 
+  const handleStartNewChat = () => {
+    setMessages([]);
+    setInputValue("");
+  };
+
   return (
     <>
       <main className="w-full h-screen flex flex-col overflow-hidden">
@@ -97,6 +102,7 @@ function App() {
               isLoading={isLoading}
               inputValue={inputValue}
               onInputChange={setInputValue}
+              handleStartNewChat={handleStartNewChat}
             />
           </div>
         </div>
