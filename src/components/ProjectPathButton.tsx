@@ -19,21 +19,14 @@ export default function ProjectPathButton() {
 
     return (
         <div className="flex gap-2 justify-start items-center">
-            {unityPath ? <Tooltip>
+            <Tooltip defaultOpen={!unityPath}>
                 <TooltipTrigger asChild>
                     <Button variant="outline" onClick={handleSelectUnityPath}><FolderOpen /></Button>
                 </TooltipTrigger>
-                <TooltipContent side="top" sideOffset={8} className="z-50">
+                <TooltipContent side="top">
                     <p>Select your Unity project folder</p>
                 </TooltipContent>
-            </Tooltip> : <Tooltip defaultOpen>
-                <TooltipTrigger asChild>
-                    <Button variant="outline" onClick={handleSelectUnityPath}><FolderOpen /></Button>
-                </TooltipTrigger>
-                <TooltipContent side="top" sideOffset={8} className="z-50">
-                    <p>Select your Unity project folder</p>
-                </TooltipContent>
-            </Tooltip>}
+            </Tooltip>
             {unityPath && <Badge variant="outline" className="border-green-500 text-green-500">Project Connected <CheckCircle /></Badge>}
             {!unityPath && <Badge variant="outline" className="border-red-500 text-red-500">Project Not Connected <CircleAlert /></Badge>}
         </div>
