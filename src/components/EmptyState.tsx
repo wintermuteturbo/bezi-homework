@@ -8,7 +8,7 @@ export default function EmptyState({ onSelectPrompt }: EmptyStateProps) {
     const examplePrompts = [
         "Generate a scene with a red cube and a blue sphere",
         "Make a scene with 3 cylinders in different colors forming a triangle",
-        "Make a scene couple of trees and a house ane explain elements and their properties in the scene"
+        "Make a scene with couple of trees and a house ane explain elements and their properties in the scene"
     ];
 
     return (
