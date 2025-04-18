@@ -1,8 +1,3 @@
-interface ChatGPTResponse {
-  text: string;
-  error?: string;
-}
-
 // Define API message interface to match OpenAI's API
 interface ApiMessage {
   role: 'user' | 'assistant' | 'system';
@@ -49,12 +44,15 @@ public class ${UNITY_CLASS_NAME} : MonoBehaviour
         cube.GetComponent<Renderer>().material.color = Color.red;
     }
 }`;
-// TOBD: add passing messages history to the prompt to mantain context of the conversation
-export async function sendMessageToChatGPT(message: string, previousMessages: ApiMessage[] = []): Promise<ChatGPTResponse> {
+
+// Streaming version of the ChatGPT API response
+export async function streamChatGPTResponse(
+  message: string, 
+  previousMessages: ApiMessage[] = [],
+  onChunk: (chunk: string) => void
+): Promise<void> {
   try {
-    
     const apiUrl = CHATGPT_API_URL;
-    
     const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
     
     if (!apiKey) {
@@ -81,42 +79,60 @@ export async function sendMessageToChatGPT(message: string, previousMessages: Ap
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o', // Using a more capable model
+        model: 'gpt-4o',
         messages: messagesPayload,
         max_tokens: 2000,
-        temperature: 0.7 // Slightly higher creativity
+        temperature: 0.7,
+        stream: true // Enable streaming
       })
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error?.message || 'Failed to get response from ChatGPT');
+      throw new Error(errorData.error?.message || 'Failed to get streaming response from ChatGPT');
     }
 
-    const data = await response.json();
-    return {
-      text: data.choices[0].message.content
-    };
+    // Process the stream
+    const reader = response.body?.getReader();
+    if (!reader) throw new Error('Failed to get reader from response');
+
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      buffer += decoder.decode(value, { stream: true });
+      
+      // Process all complete "data:" lines in the buffer
+      while (buffer.includes('\n\n')) {
+        const lineEnd = buffer.indexOf('\n\n');
+        const line = buffer.slice(0, lineEnd).trim();
+        buffer = buffer.slice(lineEnd + 2);
+        
+        if (line.startsWith('data: ')) {
+          const dataStr = line.slice(6);
+          
+          // Handle end of stream
+          if (dataStr === '[DONE]') {
+            break;
+          }
+          
+          try {
+            const data = JSON.parse(dataStr);
+            const content = data.choices[0]?.delta?.content;
+            if (content) {
+              onChunk(content);
+            }
+          } catch (e) {
+            console.error('Error parsing JSON from stream:', e);
+          }
+        }
+      }
+    }
   } catch (error) {
-    console.error('Error calling ChatGPT API:', error);
-    return {
-      text: '',
-      error: error instanceof Error ? error.message : 'An unknown error occurred'
-    };
+    console.error('Error in streaming ChatGPT API:', error);
+    throw error;
   }
 }
-
-// Helper function to validate if the response is valid Unity C# code
-export function isValidUnityCode(codeString: string): boolean {
-  try {
-    // Basic validation - check for required Unity elements
-    return (
-      codeString.includes('using UnityEngine') && 
-      (codeString.includes('MonoBehaviour') || 
-       codeString.includes('GameObject') || 
-       codeString.includes('Transform'))
-    );
-  } catch (error) {
-    return false;
-  }
-} 

@@ -1,10 +1,8 @@
 import { useState } from "react";
-
 import ChatDisplay from "./components/ChatDisplay";
 import { Message } from "./components/ChatMessage";
-import { sendMessageToChatGPT } from "./utils/chatgpt";
+import { streamChatGPTResponse } from "./utils/chatgpt";
 import { generateId } from "./utils/helpers";
-
 import ChatInputCard from "./components/ChatInputCard";
 
 function App() {
@@ -29,23 +27,31 @@ function App() {
         content: msg.text
       }));
 
-      // Send message to ChatGPT with conversation history
-      const response = await sendMessageToChatGPT(message, apiMessages);
-
-      if (response.error) {
-        throw new Error(response.error);
-      }
-
-      const responseText = response.text;
-
-      // Add ChatGPT's response to the chat
+      // Create a placeholder for assistant's response
+      const assistantMessageId = generateId();
       const assistantMessage: Message = {
-        id: generateId(),
-        text: responseText,
+        id: assistantMessageId,
+        text: '',
         role: 'assistant'
       };
 
       setMessages(prevMessages => [...prevMessages, assistantMessage]);
+
+      // Stream the response from ChatGPT
+      await streamChatGPTResponse(
+        message,
+        apiMessages,
+        (chunk) => {
+          // Update the message in the messages array
+          setMessages(prevMessages =>
+            prevMessages.map(msg =>
+              msg.id === assistantMessageId
+                ? { ...msg, text: msg.text + chunk }
+                : msg
+            )
+          );
+        }
+      );
     } catch (error) {
       // Handle error
       const errorMessage: Message = {
@@ -66,12 +72,12 @@ function App() {
     <main className="w-full h-screen flex flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto pb-[400px]">
         <div className="max-w-[900px] mx-auto p-5">
-          <ChatDisplay messages={messages} />
+          <ChatDisplay messages={messages} isLoading={isLoading} />
         </div>
       </div>
       <div className="fixed bottom-5 left-0 right-0 bg-transparent">
         <div className="max-w-[900px] mx-auto">
-          <ChatInputCard handleChatSubmit={handleChatSubmit} />
+          <ChatInputCard handleChatSubmit={handleChatSubmit} isLoading={isLoading} />
         </div>
       </div>
     </main>

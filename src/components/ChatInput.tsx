@@ -3,16 +3,17 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 interface ChatInputProps {
   onSubmit: (message: string) => void;
+  isLoading?: boolean;
 }
 
-export default function ChatInput({ onSubmit }: ChatInputProps) {
+export default function ChatInput({ onSubmit, isLoading = false }: ChatInputProps) {
   const [message, setMessage] = useState("");
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     // support multiline input
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (message.trim()) {
+      if (message.trim() && !isLoading) {
         onSubmit(message);
         setMessage("");
       }
@@ -40,6 +41,7 @@ export default function ChatInput({ onSubmit }: ChatInputProps) {
               onClick={() => useExamplePrompt(prompt)}
               variant="outline"
               type="button"
+              disabled={isLoading}
             >
               {prompt}
             </Button>
@@ -51,9 +53,10 @@ export default function ChatInput({ onSubmit }: ChatInputProps) {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Describe the Unity objects you want to create... (Press Enter to submit)"
+          placeholder={isLoading ? "Please wait..." : "Describe the Unity objects you want to create... (Press Enter to submit)"}
           rows={3}
           className="w-full"
+          disabled={isLoading}
         />
       </div>
     </div>
