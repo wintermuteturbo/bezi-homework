@@ -4,7 +4,7 @@ import { extractCSharpCodeFromText, extractClassNameFromCode } from '../utils/co
 import { Button } from '@/components/ui/button';
 import { invoke } from '@tauri-apps/api/core';
 import { SaveIcon } from 'lucide-react';
-
+import { toast } from 'sonner';
 export interface Message {
   id: string;
   text: string;
@@ -34,7 +34,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
       const unityPath = localStorage.getItem("unityPath");
 
       if (!unityPath) {
-        alert("Please select a Unity project folder first");
+        toast.error("Please select a Unity project folder first");
         return;
       }
 
@@ -42,7 +42,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
       const csharpCode = extractCSharpCodeFromText(message.text);
 
       if (!csharpCode) {
-        alert("No valid C# code found in the message");
+        toast.error("No valid C# code found in the message");
         return;
       }
 
@@ -50,7 +50,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
       const className = extractClassNameFromCode(csharpCode);
 
       if (!className) {
-        alert("Could not determine the class name from the C# code");
+        toast.error("Could not determine the class name from the C# code");
         return;
       }
 
@@ -64,10 +64,10 @@ export default function ChatMessage({ message }: ChatMessageProps) {
         unityPath: unityPath
       });
 
-      alert(`Script saved: ${scriptResult}`);
+      toast.success(`Script saved: ${scriptResult}`);
     } catch (error) {
       console.error("Error saving script to Unity:", error);
-      alert("Failed to save script to Unity");
+      toast.error("Failed to save script to Unity");
     }
   };
 
