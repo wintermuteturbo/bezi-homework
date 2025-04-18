@@ -6,6 +6,7 @@ import { generateId } from "./utils/helpers";
 import ChatInputCard from "./components/ChatInputCard";
 import EmptyState from "./components/EmptyState";
 import { Toaster } from "./components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 function App() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -76,6 +77,7 @@ function App() {
 
   const handlePromptSelect = (prompt: string) => {
     setInputValue(prompt);
+    handleChatSubmit(prompt);
   };
 
   const handleStartNewChat = () => {
@@ -85,28 +87,30 @@ function App() {
 
   return (
     <>
-      <main className="w-full h-screen flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto pb-[200px]">
-          <div className="max-w-[900px] mx-auto p-5">
-            {messages.length > 0 ? (
-              <ChatDisplay messages={messages} isLoading={isLoading} />
-            ) : (
-              <EmptyState onSelectPrompt={handlePromptSelect} />
-            )}
+      <TooltipProvider>
+        <main className="w-full h-screen flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-y-auto pb-[200px]">
+            <div className="max-w-[900px] mx-auto p-5">
+              {messages.length > 0 ? (
+                <ChatDisplay messages={messages} isLoading={isLoading} />
+              ) : (
+                <EmptyState onSelectPrompt={handlePromptSelect} />
+              )}
+            </div>
           </div>
-        </div>
-        <div className="fixed bottom-5 left-0 right-0 bg-transparent">
-          <div className="max-w-[900px] mx-auto">
-            <ChatInputCard
-              handleChatSubmit={handleChatSubmit}
-              isLoading={isLoading}
-              inputValue={inputValue}
-              onInputChange={setInputValue}
-              handleStartNewChat={handleStartNewChat}
-            />
+          <div className="fixed bottom-5 left-0 right-0 bg-transparent">
+            <div className="max-w-[900px] mx-auto">
+              <ChatInputCard
+                handleChatSubmit={handleChatSubmit}
+                isLoading={isLoading}
+                inputValue={inputValue}
+                onInputChange={setInputValue}
+                handleStartNewChat={handleStartNewChat}
+              />
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </TooltipProvider>
       <Toaster richColors closeButton />
     </>
   );

@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { chooseUnityFolder } from "../utils/chooseUnityFolder";
 import { Button } from "@/components/ui/button"
-import { FolderOpen } from "lucide-react";
+import { CheckCircle, CircleAlert, FolderOpen } from "lucide-react";
+import { Badge } from "./ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 
 export default function ProjectPathButton() {
@@ -17,8 +19,23 @@ export default function ProjectPathButton() {
 
     return (
         <div className="flex gap-2 justify-start items-center">
-            <Button variant="outline" onClick={handleSelectUnityPath}><FolderOpen /></Button>
-            <p className="text-sm text-muted-foreground shadow-inner p-2 rounded-md bg-muted">Project Path: {unityPath || "Select a path to Unity project"}</p>
+            {unityPath ? <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button variant="outline" onClick={handleSelectUnityPath}><FolderOpen /></Button>
+                </TooltipTrigger>
+                <TooltipContent side="top" sideOffset={8} className="z-50">
+                    <p>Select your Unity project folder</p>
+                </TooltipContent>
+            </Tooltip> : <Tooltip defaultOpen>
+                <TooltipTrigger asChild>
+                    <Button variant="outline" onClick={handleSelectUnityPath}><FolderOpen /></Button>
+                </TooltipTrigger>
+                <TooltipContent side="top" sideOffset={8} className="z-50">
+                    <p>Select your Unity project folder</p>
+                </TooltipContent>
+            </Tooltip>}
+            {unityPath && <Badge variant="outline" className="border-green-500 text-green-500">Project Connected <CheckCircle /></Badge>}
+            {!unityPath && <Badge variant="outline" className="border-red-500 text-red-500">Project Not Connected <CircleAlert /></Badge>}
         </div>
     );
 }

@@ -22,11 +22,12 @@ const ChatInputCard = ({
                 <Button
                     onClick={handleStartNewChat}
                     variant="outline"
-                    size="sm"
+                    className="mr-2"
                 >
                     <PenSquare className="size-4 mr-1" />
                     New Chat
                 </Button>
+                <ProjectPathButton />
             </div>
 
             <ChatInput
@@ -35,7 +36,6 @@ const ChatInputCard = ({
                 value={inputValue}
                 onChange={onInputChange}
             />
-            <ProjectPathButton />
         </div>
     )
 }
