@@ -6,9 +6,9 @@ interface EmptyStateProps {
 
 export default function EmptyState({ onSelectPrompt }: EmptyStateProps) {
     const examplePrompts = [
-        "Create a red cube at position [0,1,0] and a blue sphere at [2,1,0]",
+        "Generate a scene with a red cube and a blue sphere",
         "Make a scene with 3 cylinders in different colors forming a triangle",
-        "Generate a metallic sphere above a wooden plane"
+        "Make a scene couple of trees and a house ane explain elements and their properties in the scene"
     ];
 
     return (

@@ -18,7 +18,7 @@ export default function ProjectPathButton() {
     return (
         <div className="flex gap-2 justify-start items-center">
             <Button variant="outline" onClick={handleSelectUnityPath}><FolderOpen /></Button>
-            <p className="text-sm text-muted-foreground shadow-inner p-2 rounded-md bg-muted">Project Path: {unityPath || "Select a path to Unity Project"}</p>
+            <p className="text-sm text-muted-foreground shadow-inner p-2 rounded-md bg-muted">Project Path: {unityPath || "Select a path to Unity project"}</p>
         </div>
     );
 }

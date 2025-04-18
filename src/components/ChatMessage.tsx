@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { formatCodeInText } from '../utils/codeFormatter';
 import { extractCSharpCodeFromText, extractClassNameFromCode } from '../utils/codeExtractor';
 import { Button } from '@/components/ui/button';
 import { invoke } from '@tauri-apps/api/core';
 import { SaveIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { clsx } from 'clsx';
 export interface Message {
   id: string;
   text: string;
@@ -19,6 +21,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
   const [hasValidCode, setHasValidCode] = useState(false);
   const formattedContent = formatCodeInText(message.text);
   const hasCode = formattedContent.some(part => part.type === 'code');
+  const isUserMessage = message.role === 'user';
 
   // Check for valid C# code when message changes
   useEffect(() => {
@@ -71,27 +74,36 @@ export default function ChatMessage({ message }: ChatMessageProps) {
     }
   };
 
+  // Define styles based on message role
+  const messageStyles = isUserMessage
+    ? 'ml-auto bg-blue-500 text-white self-end'
+    : 'pb-12 mr-auto bg-gray-100 text-gray-800 self-start';
+
+  const codeBlockStyles = isUserMessage
+    ? 'bg-blue-700 text-white'
+    : 'bg-white shadow-inner border border-gray-200 rounded-md';
+
   return (
-    <div
-      className={`mx-0 my-2.5 p-4 rounded-lg max-w-[90%] relative ${message.role === 'user'
-        ? 'ml-auto bg-blue-500 text-white self-end'
-        : 'pb-12 mr-auto bg-gray-100 text-gray-800 self-start'
-        }`}
-    >
+    <div className={`mx-0 my-2.5 p-4 rounded-lg max-w-[90%] relative ${messageStyles}`}>
       <div className="flex flex-col">
         <span className="font-bold mb-1.5 text-sm">
-          {message.role === 'user' ? 'You' : 'Assistant'}
+          {isUserMessage ? 'You' : 'Assistant'}
         </span>
         <div className="m-0 break-words">
           {formattedContent.map((part, index) =>
             part.type === 'text' ? (
-              <div key={index} className="whitespace-pre-wrap">{part.content}</div>
+              <div
+                className={clsx(
+                  "prose prose-sm max-w-none dark:prose-invert",
+                  isUserMessage && "text-white"
+                )}
+                key={index}
+              >
+                <ReactMarkdown children={part.content} />
+              </div>
             ) : (
               <>
-                <pre key={index} className={`rounded-md my-2 overflow-x-auto ${message.role === 'user'
-                  ? 'bg-blue-700 text-white'
-                  : 'bg-white shadow-inner border border-gray-200 rounded-md'
-                  }`}>
+                <pre key={index} className={`rounded-md my-4 overflow-x-auto ${codeBlockStyles}`}>
                   <div className="flex items-center px-4 py-2 text-xs border-b border-gray-100">
                     <span className="flex-1 text-gray-500 text-md">{part.language || 'code'}</span>
                   </div>
@@ -99,13 +111,10 @@ export default function ChatMessage({ message }: ChatMessageProps) {
                     className={`block p-4 text-sm ${part.language ? `language-${part.language}` : ''}`}
                     dangerouslySetInnerHTML={{ __html: part.content }}
                   />
-
                 </pre>
                 {message.role === 'assistant' && hasCode && hasValidCode && (
-                  <div className=" flex justify-end">
-                    <Button
-                      onClick={handleSaveToUnity}
-                    >
+                  <div className="flex justify-end mb-4">
+                    <Button onClick={handleSaveToUnity}>
                       <SaveIcon className="mr-2" /> Save to Unity
                     </Button>
                   </div>
