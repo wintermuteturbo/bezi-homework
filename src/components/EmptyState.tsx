@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-
+import { Lightbulb } from "lucide-react"
 interface EmptyStateProps {
     onSelectPrompt: (prompt: string) => void;
 }
@@ -12,9 +12,10 @@ export default function EmptyState({ onSelectPrompt }: EmptyStateProps) {
     ];
 
     return (
-        <div className="flex flex-col items-center justify-center py-10 px-5">
-            <h2 className="text-lg font-medium mb-4">Get started with some examples:</h2>
-            <div className="flex flex-wrap gap-2 justify-center max-w-[700px]">
+        <div className="flex flex-col max-w-[900px] prose text-center">
+            <h2>Welcome to the 3D Scene Generator</h2>
+            <p>Get started by trying one of these examples or type your own prompt below</p>
+            <div className="flex flex-wrap gap-3 justify-start w-full mt-4">
                 {examplePrompts.map((prompt, index) => (
                     <Button
                         key={index}
@@ -23,6 +24,7 @@ export default function EmptyState({ onSelectPrompt }: EmptyStateProps) {
                         type="button"
                         className="text-sm"
                     >
+                        <Lightbulb className="size-4 mr-2 text-yellow-500" />
                         {prompt}
                     </Button>
                 ))}
