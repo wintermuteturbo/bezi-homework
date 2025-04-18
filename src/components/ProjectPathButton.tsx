@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { chooseUnityFolder } from "../utils/chooseUnityFolder";
 import { Button } from "@/components/ui/button"
-import { FolderInput } from "lucide-react";
+import { FolderOpen } from "lucide-react";
 
 
 export default function ProjectPathButton() {
@@ -17,8 +17,8 @@ export default function ProjectPathButton() {
 
     return (
         <div className="flex gap-2 justify-start items-center">
-            <Button variant="outline" onClick={handleSelectUnityPath}> <FolderInput /> Project Path</Button>
-            <p>Current Path: {unityPath || "None selected"}</p>
+            <Button variant="outline" onClick={handleSelectUnityPath}><FolderOpen /></Button>
+            <p className="text-sm text-muted-foreground shadow-inner p-2 rounded-md bg-muted">Project Path: {unityPath || "Select a path to Unity Project"}</p>
         </div>
     );
 }

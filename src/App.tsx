@@ -4,10 +4,12 @@ import { Message } from "./components/ChatMessage";
 import { streamChatGPTResponse } from "./utils/chatgpt";
 import { generateId } from "./utils/helpers";
 import ChatInputCard from "./components/ChatInputCard";
+import EmptyState from "./components/EmptyState";
 
 function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [inputValue, setInputValue] = useState("");
 
   const handleChatSubmit = async (message: string) => {
     // Add user message to the chat
@@ -16,6 +18,9 @@ function App() {
       text: message,
       role: 'user'
     };
+
+    // Clear input field after submitting
+    setInputValue("");
 
     setMessages(prevMessages => [...prevMessages, userMessage]);
     setIsLoading(true);
@@ -68,16 +73,29 @@ function App() {
     }
   };
 
+  const handlePromptSelect = (prompt: string) => {
+    setInputValue(prompt);
+  };
+
   return (
     <main className="w-full h-screen flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto pb-[400px]">
+      <div className="flex-1 overflow-y-auto pb-[200px]">
         <div className="max-w-[900px] mx-auto p-5">
-          <ChatDisplay messages={messages} isLoading={isLoading} />
+          {messages.length > 0 ? (
+            <ChatDisplay messages={messages} isLoading={isLoading} />
+          ) : (
+            <EmptyState onSelectPrompt={handlePromptSelect}/>
+          )}
         </div>
       </div>
       <div className="fixed bottom-5 left-0 right-0 bg-transparent">
         <div className="max-w-[900px] mx-auto">
-          <ChatInputCard handleChatSubmit={handleChatSubmit} isLoading={isLoading} />
+          <ChatInputCard
+            handleChatSubmit={handleChatSubmit}
+            isLoading={isLoading}
+            inputValue={inputValue}
+            onInputChange={setInputValue}
+          />
         </div>
       </div>
     </main>

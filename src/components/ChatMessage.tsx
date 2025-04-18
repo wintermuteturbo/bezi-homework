@@ -90,10 +90,10 @@ export default function ChatMessage({ message }: ChatMessageProps) {
               <>
                 <pre key={index} className={`rounded-md my-2 overflow-x-auto ${message.role === 'user'
                   ? 'bg-blue-700 text-white'
-                  : 'bg-gray-800 text-gray-100'
+                  : 'bg-white shadow-inner border border-gray-200 rounded-md'
                   }`}>
-                  <div className="flex items-center px-4 py-2 text-xs border-b border-gray-700">
-                    <span className="flex-1">{part.language || 'code'}</span>
+                  <div className="flex items-center px-4 py-2 text-xs border-b border-gray-100">
+                    <span className="flex-1 text-gray-500 text-md">{part.language || 'code'}</span>
                   </div>
                   <code
                     className={`block p-4 text-sm ${part.language ? `language-${part.language}` : ''}`}
