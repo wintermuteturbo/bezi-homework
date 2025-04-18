@@ -1,6 +1,10 @@
 # Unity AI Script Generator
 
-A desktop application that leverages AI (ChatGPT) to generate and save Unity C# scripts directly to your Unity project.
+![image](https://github.com/user-attachments/assets/d6b54e2c-5659-4fd8-9824-8399dd082826)
+![Screenshot 2025-04-18 152305](https://github.com/user-attachments/assets/abc2fdfb-f388-4c59-9229-b5f0452fbb74)
+
+A desktop application that leverages AI (ChatGPT) to generate and save Unity C# scripts directly to
+ your Unity project.
 
 ## Architecture & Design
 
