@@ -18,7 +18,7 @@ export default function ProjectPathButton() {
     };
 
     return (
-        <div className="flex gap-2 justify-start items-center">
+        <div className="flex gap-2 justify-start items-start">
             <Tooltip defaultOpen={!unityPath}>
                 <TooltipTrigger asChild>
                     <Button variant="outline" onClick={handleSelectUnityPath}><FolderOpen /></Button>

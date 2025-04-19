@@ -94,7 +94,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
             part.type === 'text' ? (
               <div
                 className={clsx(
-                  "prose prose-sm max-w-none dark:prose-invert",
+                  "prose prose-sm max-w-none",
                   isUserMessage && "text-white"
                 )}
                 key={index}
